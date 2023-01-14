@@ -5,7 +5,8 @@ import tensorflow as tf
 from absl import logging as absl_logging
 
 from private_detector.utils.preprocess import preprocess_for_evaluation
-
+#from os import listdir
+import glob
 
 def read_image(filename: str) -> tf.Tensor:
     """
@@ -47,13 +48,17 @@ def inference(model: str , image_paths: List[str]) -> None:
         Path(s) to image to be predicted on
     """
     model = tf.saved_model.load(model)
-
+    
     for image_path in image_paths:
-        image = read_image(image_path)
+        desktop = glob.glob(image_path)
+        print(desktop)
+        for fileImage in desktop:
+            print(fileImage)
+            image = read_image(fileImage)
 
-        preds = model([image])
+            preds = model([image])
 
-        print(f'Probability: {100 * tf.get_static_value(preds[0])[0]:.2f}% - {image_path}')
+            print(f'Probability: {100 * tf.get_static_value(preds[0])[0]:.2f}% - {image_path}')
 
 
 if __name__ == '__main__':
